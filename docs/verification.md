@@ -1,5 +1,34 @@
 > Historical checkpoints below include retired local-model and forked-Voxtype implementations. Current build: [Codex integration verification](codex-integration-verification.md).
 
+## Web search extension (2026-10-14)
+
+- Added the self-contained `extensions/websearch` provider: `g <query>`
+  returns exactly one row that opens the chosen engine's search page in the
+  default browser; Ctrl+Enter copies the URL. Rows appear only for the
+  declared command or on the extension's own screen, so ordinary queries
+  stay quiet. The engine (Google, DuckDuckGo, Brave, Bing, Startpage) is an
+  enum setting; the trigger is the reserved `prefix` setting.
+- The engine table in `core/Model.js` is the single source of truth for the
+  enum options and the URL builder. The text is percent-encoded with spaces
+  sent as `+`, so it cannot add parameters to the URL. The extension runs no
+  processes, makes no network calls and touches no files; Enter runs
+  `xdg-open` and Ctrl+Enter runs `wl-copy`, both as host effects from the
+  row.
+- Passed: `bin/keystroke check-extensions extensions/websearch` (qmllint
+  clean, 8 QML unit tests on the model: per-engine URLs, encoding that
+  cannot inject parameters, row shape, empty-text silence, settings/table
+  parity); the new `extensions/websearch/tests/palette_check.py`, which
+  drives the real palette offscreen with an isolated HOME through
+  load/unload with the switch, command routing, the engine setting, a
+  renamed prefix and the extension's own screen; `bin/keystroke validate`;
+  `QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software bin/keystroke test`
+  (272 QML tests, every integration check, `tools/check_extensions.py` for
+  all eleven extensions, `tests/lint.sh` exit 0).
+- Not exercised: a live omarchy-shell session with the extension turned on
+  (the palette check drives the real palette offscreen instead); the row's
+  actual `xdg-open`/`wl-copy` activation, which the check asserts as
+  effects without running them.
+
 ## Release 1.5.1 (2026-10-09)
 
 - Contents since 1.5.0, all merged from contributor PRs on 2026-10-09: the

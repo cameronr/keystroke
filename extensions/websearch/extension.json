@@ -1,0 +1,22 @@
+{
+  "name": "Web search",
+  "version": "1.0.0",
+  "author": "cam",
+  "description": "Force a web search: g <query> opens the search engine directly",
+  "apiVersion": 1,
+  "icon": "󰊭",
+  "color": "#4285f4",
+  "license": "MIT",
+  "commands": [
+    {
+      "id": "g",
+      "prefix": "g",
+      "title": "Search the web",
+      "summary": "Open a web search for the text in your browser",
+      "args": [
+        { "name": "query", "hint": "words to search for", "rest": true }
+      ],
+      "examples": ["g rust lifetimes", "g omarchy wallpaper"]
+    }
+  ]
+}
