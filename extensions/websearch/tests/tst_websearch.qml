@@ -36,7 +36,7 @@ TestCase {
         compare(row.subtitle, "omarchy wallpaper")
         compare(row.verb, "Search")
         compare(row.altVerb, "Copy URL")
-        compare(row.tier, "item")
+        compare(row.tier, "answer")
         compare(row.score, 100)
         compare(row.action.type, "url")
         compare(row.action.url, "https://www.google.com/search?q=omarchy+wallpaper")

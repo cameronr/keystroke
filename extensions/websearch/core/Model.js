@@ -46,7 +46,10 @@ function rows(text, engine, key) {
   var url = searchUrl(engine, q)
   // A fixed score keeps the row out of the default matcher: the query is
   // search terms, not words of the title, and a zero score would drop the row.
+  // The answer tier keeps it through Smart Match's intent filters, which drop
+  // item rows for blocked or family requests ("how to center a div", "install
+  // rust"); inside this extension's screen the search is the explicit request.
   return [{ id: key, title: "Search " + e[0], subtitle: q, icon: ICON, verb: "Search",
-            tier: "item", score: 100,
+            tier: "answer", score: 100,
             action: { type: "url", url: url }, altAction: { type: "copy", text: url }, altVerb: "Copy URL" }]
 }

@@ -34,6 +34,6 @@ QtObject {
   // Answer only the declared command or this extension's own screen.
   function query(ctx) {
     if (!ctx.command && ctx.scope !== root.key) return []
-    return Model.rows(ctx.command ? ctx.command.rest : ctx.query, (ctx.settings || {}).engine, root.key)
+    return Model.rows(ctx.command ? ctx.command.rest : ctx.rawQuery, (ctx.settings || {}).engine, root.key)
   }
 }

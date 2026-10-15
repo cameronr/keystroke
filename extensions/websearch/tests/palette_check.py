@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Real palette offscreen and isolated HOME. Web search runs no processes and
 reads no data, so there is nothing to fake: the check drives the real palette
-through the switch, the command, the engine setting, a renamed prefix and the
-extension's own screen."""
+through the switch, the command, the engine setting, a renamed prefix, the
+extension's own screen and that screen under Smart Match."""
 import json
 import os
 from pathlib import Path
@@ -34,8 +34,8 @@ ShellRoot {
   function service() { var s = palette.registry.services["websearch"]; return s ? s.instance : null }
   function check(ok, msg) { if (!ok) { failures++; console.log("FAIL", msg) } }
   function items() { return palette.rows.filter(function(r) { return r.providerKey === "websearch" && !r.disabled }) }
-  function configure(on, engine, prefix) {
-    palette.applyConfigText(JSON.stringify({ version: 1, matching: { mode: "off" }, providers: {
+  function configure(on, engine, prefix, mode) {
+    palette.applyConfigText(JSON.stringify({ version: 1, matching: { mode: mode || "off" }, providers: {
       websearch: { enabled: on, engine: engine, prefix: prefix || "g" }
     } }))
   }
@@ -86,9 +86,31 @@ ShellRoot {
     case 7:
       var screen = items()[0]
       check(items().length === 1 && screen && screen.subtitle === "hello world", "the extension's own screen searches: " + items().length)
-      configure(false, "google")
+      // Smart match on: the scoped rows must survive the intent filters, and
+      // the palette's arithmetic rewrite of ctx.query must not reach the row.
+      // The isolated HOME has no matching model, but only the synchronous
+      // filters matter here: scoped queries never submit to the helper.
+      configure(true, "google", "g", "all")
       test.stage++; return
     case 8:
+      if (palette.matchingSettings.mode !== "all") return
+      palette.setQuery("how to center a div")
+      test.stage++; return
+    case 9:
+      var blocked = items()[0]
+      check(items().length === 1 && blocked && blocked.subtitle === "how to center a div", "smart match on: a blocked scoped query survives the intent filters: " + items().length + (blocked ? " " + blocked.subtitle : ""))
+      palette.setQuery("27 plus 90")
+      test.stage++; return
+    case 10:
+      var math = items()[0]
+      check(items().length === 1 && math && math.subtitle === "27 plus 90", "smart match on: the subtitle is the typed text, not the arithmetic rewrite: " + items().length + (math ? " " + math.subtitle : ""))
+      palette.open(JSON.stringify({ query: "g install rust" }))
+      test.stage++; return
+    case 11:
+      check(items().length === 1, "smart match on: the exclusive command is unaffected: " + items().length)
+      configure(false, "google")
+      test.stage++; return
+    case 12:
       check(!service(), "disabling destroys service")
       console.log(test.failures ? "FAIL websearch palette" : "PASS websearch palette")
       Qt.quit(); stop(); return
@@ -108,4 +130,4 @@ ShellRoot {
     output = result.stdout + result.stderr
     assert "PASS websearch palette" in output and "FAIL" not in output, output
     assert "TypeError" not in output and "ReferenceError" not in output, output
-    print("PASS websearch palette: load/unload with the switch, command routing, the engine setting, a renamed prefix and the extension's own screen")
+    print("PASS websearch palette: load/unload with the switch, command routing, the engine setting, a renamed prefix, the extension's own screen and Smart Match on")

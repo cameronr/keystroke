@@ -14,20 +14,30 @@
   processes, makes no network calls and touches no files; Enter runs
   `xdg-open` and Ctrl+Enter runs `wl-copy`, both as host effects from the
   row.
+- Review fixes (Copilot): scoped searches read `ctx.rawQuery`, because the
+  host rewrites `ctx.query` for whole-arithmetic requests when Smart Match
+  is on; the row uses the `answer` tier, because `SmartMatch.allowed()`
+  drops `item` rows for blocked or family requests ("how to center a div",
+  "install rust"). Each new palette assertion was proven to catch its bug
+  by reverting the fix, watching the check fail on that assertion, and
+  restoring.
 - Passed: `bin/keystroke check-extensions extensions/websearch` (qmllint
   clean, 8 QML unit tests on the model: per-engine URLs, encoding that
   cannot inject parameters, row shape, empty-text silence, settings/table
   parity); the new `extensions/websearch/tests/palette_check.py`, which
   drives the real palette offscreen with an isolated HOME through
   load/unload with the switch, command routing, the engine setting, a
-  renamed prefix and the extension's own screen; `bin/keystroke validate`;
+  renamed prefix and the extension's own screen, including scoped queries
+  with Smart Match on (a blocked request, an arithmetic rewrite and the
+  exclusive command); `bin/keystroke validate`;
   `QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software bin/keystroke test`
   (272 QML tests, every integration check, `tools/check_extensions.py` for
   all eleven extensions, `tests/lint.sh` exit 0).
-- Not exercised: a live omarchy-shell session with the extension turned on
-  (the palette check drives the real palette offscreen instead); the row's
-  actual `xdg-open`/`wl-copy` activation, which the check asserts as
-  effects without running them.
+- Live check: installed via `bin/keystroke install` into the running
+  omarchy-shell; `inspect` showed the extension's rows and settings screen
+  with the switch on from the existing config. Not exercised: activating a
+  row for real, so `xdg-open`/`wl-copy` were asserted as effects but never
+  run.
 
 ## Release 1.5.1 (2026-10-09)
 

@@ -55,4 +55,6 @@ python3 extensions/websearch/tests/palette_check.py
 Tests cover URL building per engine, encoding that cannot inject parameters,
 the row shape and empty-text silence. The offscreen palette check covers
 load/unload with the switch, command routing, the engine setting, a renamed
-prefix and the extension's own screen.
+prefix and the extension's own screen, including that screen's scoped queries
+under Smart Match: a blocked request ("how to center a div") and an arithmetic
+one ("27 plus 90") keep their single row with the typed text.
